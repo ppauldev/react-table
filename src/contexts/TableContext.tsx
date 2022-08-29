@@ -1,7 +1,9 @@
+import { useQuery } from "@tanstack/react-query";
 import { createContext, useContext, useEffect, useState } from "react";
 import { TColumnsData, TRowsData } from "../api/data";
 import { fetchData } from "../api/dataFetcher";
 import { getColumnData, getRowData } from "../helper/dataParser";
+import { ErrorAlert, LoadingIcon } from "../Icons";
 
 const ColumnContext = createContext<TColumnsData | undefined>(undefined);
 const RowContext = createContext<TRowsData | undefined>(undefined);
@@ -29,13 +31,17 @@ export const useRowContext = () => {
 export const TableContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [columnData, setColumnData] = useState<TColumnsData | []>([]);
   const [rowData, setRowData] = useState<TRowsData | []>([]);
+  const { isLoading, error, data } = useQuery(['data'], () => fetchData());
 
   useEffect(() => {
-    fetchData().then((data) => {
-      setColumnData(getColumnData(data));
-      setRowData(getRowData(data));
-    });
-  }, []);
+    if (!data) return;
+
+    setColumnData(getColumnData(data));
+    setRowData(getRowData(data));
+  }, [data]);
+
+  if (isLoading) return <LoadingIcon />;
+  if (error) return <ErrorAlert />;
 
   return (
     <ColumnContext.Provider value={columnData} >
