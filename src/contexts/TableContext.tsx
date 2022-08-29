@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { TColumnsData, TRowsData } from "../api/data";
 import { fetchData } from "../api/dataFetcher";
 import { getColumnData, getRowData } from "../helper/dataParser";
-import { LoadingIcon } from "../Icons";
+import { ErrorAlert, LoadingIcon } from "../Icons";
 
 const ColumnContext = createContext<TColumnsData | undefined>(undefined);
 const RowContext = createContext<TRowsData | undefined>(undefined);
@@ -41,6 +41,7 @@ export const TableContextProvider = ({ children }: { children: React.ReactNode }
   }, [data]);
 
   if (isLoading) return <LoadingIcon />;
+  if (error) return <ErrorAlert />;
 
   return (
     <ColumnContext.Provider value={columnData} >
