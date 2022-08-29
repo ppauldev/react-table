@@ -27,6 +27,26 @@ const App = () => {
       </tbody>
     </table>
   );
-}
+};
+
+const Table = () => {
+  //
+};
+
+const TableHead = () => {
+  //
+};
+
+const TableBody = () => {
+  //
+};
+
+const TableRow = () => {
+  //
+};
+
+const TableCell = () => {
+  //
+};
 
 export default App;
