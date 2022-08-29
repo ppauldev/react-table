@@ -12,8 +12,10 @@ const App = () => {
 const Table = () => {
   return (
     <TableContextProvider>
-      <TableHead />
-      <TableBody />
+      <table>
+        <TableHead />
+        <TableBody />
+      </table>
     </TableContextProvider>
   );
 };
