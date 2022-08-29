@@ -1,7 +1,10 @@
 import { TRowData } from "./api/data";
 import { TableContextProvider, useColumnContext, useRowContext } from "./contexts/TableContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
 // Style via TailwindUI: https://tailwindui.com/components/application-ui/lists/tables
+
+const queryClient = new QueryClient()
 
 const App = () => {
   return (
@@ -12,26 +15,28 @@ const App = () => {
           <div className="mt-2 flex flex-col">
             <div className="-my-2 overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8">
               <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-                  <Table />
-                </div>
+                <Table />
               </div>
             </div>
           </div>
         </div>
-      </main>
-    </div>
+      </main >
+    </div >
   );
 };
 
 const Table = () => {
   return (
-    <TableContextProvider>
-      <table className="min-w-full divide-y divide-gray-200">
-        <TableHead />
-        <TableBody />
-      </table>
-    </TableContextProvider>
+    <QueryClientProvider client={queryClient}>
+      <TableContextProvider>
+        <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+          <table className="min-w-full divide-y divide-gray-200">
+            <TableHead />
+            <TableBody />
+          </table>
+        </div>
+      </TableContextProvider>
+    </QueryClientProvider>
   );
 };
 
