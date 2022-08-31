@@ -82,51 +82,83 @@ const TableCell = memo(({ value }: { value: string }) => {
 });
 
 const Pagination = () => {
-  const { page, pageSize, setPage, count } = usePaginationContext();
-
   return (
     <section id="pagination" className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
       <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm text-gray-700">
-            Showing
-            <span className="font-medium"> {page === 1 ? page : page * pageSize} </span>
-            to
-            <span className="font-medium"> {page === 1 ? pageSize : (page * pageSize) + pageSize} </span>
-            of
-            <span className="font-medium"> {count} </span>
-            results
-          </p>
+          <PageLabel />
         </div>
         <div>
           <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-            <button
-              onClick={() => setPage(page - 1)}
-              disabled={page === 1}
-              className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 ${page !== 1 ? "hover:bg-gray-50" : "disabled:opacity-75 cursor-not-allowed"}`}
-            >
-              <PreviousIcon />
-            </button>
-            {[...Array((Math.ceil(count / pageSize) * pageSize) / pageSize)].map((_, i) => {
-              const activeProps = { "aria-current": "page", "className": "z-10 bg-indigo-50 border-indigo-500 text-indigo-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium" };
-              const passiveProps = { "className": "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 hidden md:inline-flex relative items-center px-4 py-2 border text-sm font-medium" };
-              const styleProps = i + 1 === page ? activeProps : passiveProps;
-
-              return (
-                <button key={i} onClick={() => setPage(i + 1)} {...styleProps}> {i + 1} </button>
-              );
-            })}
-            <button
-              onClick={() => setPage(page + 1)}
-              disabled={page + 1 > (Math.ceil(count / pageSize) * pageSize) / pageSize}
-              className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 ${page + 1 <= (Math.ceil(count / pageSize) * pageSize) / pageSize ? "hover:bg-gray-50" : "disabled:opacity-75 cursor-not-allowed"}`}
-            >
-              <NextIcon />
-            </button>
+            <PreviousButton />
+            <PageButtons />
+            <NextButton />
           </nav>
         </div>
       </div>
     </section>
+  );
+};
+
+const NextButton = () => {
+  const { page, pageSize, setPage, count } = usePaginationContext();
+
+  return (
+    <button
+      onClick={() => setPage(page + 1)}
+      disabled={page + 1 > (Math.ceil(count / pageSize) * pageSize) / pageSize}
+      className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 ${page + 1 <= (Math.ceil(count / pageSize) * pageSize) / pageSize ? "hover:bg-gray-50" : "disabled:opacity-75 cursor-not-allowed"}`}
+    >
+      <NextIcon />
+    </button>
+  );
+};
+
+const PageButtons = () => {
+  const { page, pageSize, setPage, count } = usePaginationContext();
+
+  return (
+    <>
+      {[...Array((Math.ceil(count / pageSize) * pageSize) / pageSize)].map((_, i) => {
+        const activeProps = { "aria-current": "page", "className": "z-10 bg-indigo-50 border-indigo-500 text-indigo-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium" };
+        const passiveProps = { "className": "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 hidden md:inline-flex relative items-center px-4 py-2 border text-sm font-medium" };
+        const styleProps = i + 1 === page ? activeProps : passiveProps;
+
+        return (
+          <button key={i} onClick={() => setPage(i + 1)} {...styleProps}> {i + 1} </button>
+        );
+      })}
+    </>
+  );
+};
+
+const PageLabel = () => {
+  const { page, pageSize, count } = usePaginationContext();
+
+  return (
+    <p className="text-sm text-gray-700">
+      Showing
+      <span className="font-medium"> {page === 1 ? page : ((page - 1) * pageSize) + 1} </span>
+      to
+      <span className="font-medium"> {page === 1 ? pageSize : ((page - 1) * pageSize) + pageSize} </span>
+      of
+      <span className="font-medium"> {count} </span>
+      results
+    </p>
+  );
+};
+
+const PreviousButton = () => {
+  const { page, setPage } = usePaginationContext();
+
+  return (
+    <button
+      onClick={() => setPage(page - 1)}
+      disabled={page === 1}
+      className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 ${page !== 1 ? "hover:bg-gray-50" : "disabled:opacity-75 cursor-not-allowed"}`}
+    >
+      <PreviousIcon />
+    </button>
   );
 };
 
