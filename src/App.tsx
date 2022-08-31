@@ -1,6 +1,8 @@
 import { TRowData } from "./api/data";
-import { TableContextProvider, useColumnContext, useRowContext } from "./contexts/TableContext";
+import { TableContextProvider, useColumnContext, usePaginationContext, useRowContext } from "./contexts/TableContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { memo } from "react";
+import { NextIcon, PreviousIcon } from "./Icons";
 
 // Style via TailwindUI: https://tailwindui.com/components/application-ui/lists/tables
 
@@ -9,8 +11,8 @@ const queryClient = new QueryClient()
 const App = () => {
   return (
     <div className="app min-h-screen bg-gray-100 text-gray-900">
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-        <h1 className="text-xl">React Table Demo</h1>
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        <h1 className="text-xl px-4">React Table Demo</h1>
         <div className="mt-4">
           <div className="mt-2 flex flex-col">
             <div className="-my-2 overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8">
@@ -34,6 +36,7 @@ const Table = () => {
             <TableHead />
             <TableBody />
           </table>
+          <Pagination />
         </div>
       </TableContextProvider>
     </QueryClientProvider>
@@ -46,7 +49,7 @@ const TableHead = () => {
   return (
     <thead className="bg-gray-50">
       <tr>
-        {columns.map((column, i) => <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" key={i}>{column}</th>)}
+        {columns.map((column, i) => <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" key={i}>{column}</th>)}
       </tr>
     </thead>
   );
@@ -70,11 +73,92 @@ const TableRow = (rowProps: TRowData) => {
   );
 };
 
-const TableCell = ({ value }: { value: string }) => {
+const TableCell = memo(({ value }: { value: string }) => {
   return (
-    <td className="px-6 py-4 whitespace-nowrap">
+    <td className="px-6 py-4 text-center whitespace-nowrap text-sm">
       {value}
     </td>
+  );
+});
+
+const Pagination = () => {
+  return (
+    <section id="pagination" className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+      <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+        <div>
+          <PageLabel />
+        </div>
+        <div>
+          <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+            <PreviousButton />
+            <PageButtons />
+            <NextButton />
+          </nav>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const NextButton = () => {
+  const { page, pageSize, setPage, count } = usePaginationContext();
+
+  return (
+    <button
+      onClick={() => setPage(page + 1)}
+      disabled={page + 1 > (Math.ceil(count / pageSize) * pageSize) / pageSize}
+      className={`relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 ${page + 1 <= (Math.ceil(count / pageSize) * pageSize) / pageSize ? "hover:bg-gray-50" : "disabled:opacity-75 cursor-not-allowed"}`}
+    >
+      <NextIcon />
+    </button>
+  );
+};
+
+const PageButtons = () => {
+  const { page, pageSize, setPage, count } = usePaginationContext();
+
+  return (
+    <>
+      {[...Array((Math.ceil(count / pageSize) * pageSize) / pageSize)].map((_, i) => {
+        const activeProps = { "aria-current": "page", "className": "z-10 bg-indigo-50 border-indigo-500 text-indigo-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium" };
+        const passiveProps = { "className": "bg-white border-gray-300 text-gray-500 hover:bg-gray-50 hidden md:inline-flex relative items-center px-4 py-2 border text-sm font-medium" };
+        const styleProps = i + 1 === page ? activeProps : passiveProps;
+
+        return (
+          <button key={i} onClick={() => setPage(i + 1)} {...styleProps}> {i + 1} </button>
+        );
+      })}
+    </>
+  );
+};
+
+const PageLabel = () => {
+  const { page, pageSize, count } = usePaginationContext();
+
+  return (
+    <p className="text-sm text-gray-700">
+      Showing
+      <span className="font-medium"> {page === 1 ? page : ((page - 1) * pageSize) + 1} </span>
+      to
+      <span className="font-medium"> {page === 1 ? pageSize : ((page - 1) * pageSize) + pageSize} </span>
+      of
+      <span className="font-medium"> {count} </span>
+      results
+    </p>
+  );
+};
+
+const PreviousButton = () => {
+  const { page, setPage } = usePaginationContext();
+
+  return (
+    <button
+      onClick={() => setPage(page - 1)}
+      disabled={page === 1}
+      className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 ${page !== 1 ? "hover:bg-gray-50" : "disabled:opacity-75 cursor-not-allowed"}`}
+    >
+      <PreviousIcon />
+    </button>
   );
 };
 
