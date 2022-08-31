@@ -2,7 +2,7 @@ import { TRowData } from "./api/data";
 import { TableContextProvider, useColumnContext, usePaginationContext, useRowContext } from "./contexts/TableContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { memo } from "react";
-import { NextIcon, PreviousIcon } from "./Icons";
+import { NextIcon, PreviousIcon, SortDownIcon, SortIcon, SortUpIcon } from "./Icons";
 
 // Style via TailwindUI: https://tailwindui.com/components/application-ui/lists/tables
 
@@ -44,12 +44,38 @@ const Table = () => {
 };
 
 const TableHead = () => {
-  const columns = useColumnContext();
+  const { columns, sortColumn } = useColumnContext();
 
   return (
     <thead className="bg-gray-50">
       <tr>
-        {columns.map((column, i) => <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" key={i}>{column}</th>)}
+        {columns.map((column, i) => {
+          return (
+            <th
+              key={i}
+              onClick={() => sortColumn(column.label)}
+              scope="col"
+              className="group px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider hover:cursor-pointer"
+            >
+              <div className="flex items-center justify-between w-full">
+                <div>
+                  {column.label}
+                </div>
+                <div>
+                  <span>
+                    {column.sortMode !== 0
+                      ? column.sortMode !== 1
+                        ? <SortDownIcon />
+                        : <SortUpIcon />
+                      : (
+                        <SortIcon />
+                      )}
+                  </span>
+                </div>
+              </div>
+            </th>
+          );
+        })}
       </tr>
     </thead>
   );
@@ -68,16 +94,26 @@ const TableBody = () => {
 const TableRow = (rowProps: TRowData) => {
   return (
     <tr>
-      {Object.values(rowProps).map((value, i) => <TableCell key={i} value={value} />)}
+      {Object.values(rowProps).map((value, i) => <TableCell key={i} value={value} index={i} />)}
     </tr>
   );
 };
 
-const TableCell = memo(({ value }: { value: string }) => {
+const TableCell = memo(({ value, index }: { value: string, index: number }) => {
   return (
-    <td className="px-6 py-4 text-center whitespace-nowrap text-sm">
-      {value}
-    </td>
+    <>
+      {index !== 0 ? (
+        <td className="px-6 py-4 text-left whitespace-nowrap text-sm">
+          {value}
+        </td>
+      ) : (
+        <td className="px-6 py-4 text-center whitespace-nowrap text-sm">
+          <span className="px-4 py-1 uppercase leading-wide font-bold text-xs rounded-full shadow-sm bg-gray-100 text-gray-700 hover:cursor-default">
+            {value}
+          </span>
+        </td>
+      )}
+    </>
   );
 });
 
@@ -155,7 +191,7 @@ const PreviousButton = () => {
     <button
       onClick={() => setPage(page - 1)}
       disabled={page === 1}
-      className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 ${page !== 1 ? "hover:bg-gray-50" : "disabled:opacity-75 cursor-not-allowed"}`}
+      className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 ${page !== 1 ? "hover:bg-gray-50" : "disabled:opacity-75 cursor-not-allowed"} `}
     >
       <PreviousIcon />
     </button>
