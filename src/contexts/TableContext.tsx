@@ -49,8 +49,8 @@ export const usePaginationContext = () => {
 export const TableContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [columnData, setColumnData] = useState<TColumnsData | []>([]);
   const [rowData, setRowData] = useState<TRowsData | []>([]);
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
   const { isLoading, error, data } = useQuery(['data'], () => fetchData());
 
   useEffect(() => {
