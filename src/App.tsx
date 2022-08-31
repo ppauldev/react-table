@@ -9,7 +9,7 @@ const queryClient = new QueryClient()
 const App = () => {
   return (
     <div className="app min-h-screen bg-gray-100 text-gray-900">
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
         <h1 className="text-xl">React Table Demo</h1>
         <div className="mt-4">
           <div className="mt-2 flex flex-col">
