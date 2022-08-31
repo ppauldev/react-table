@@ -44,11 +44,7 @@ const Table = () => {
 };
 
 const TableHead = () => {
-  const columns = useColumnContext();
-
-  const sortColumn = (column: object) => {
-    console.log("sorting ...: ", column);
-  };
+  const { columns, sortColumn } = useColumnContext();
 
   return (
     <thead className="bg-gray-50">
@@ -57,9 +53,9 @@ const TableHead = () => {
           return (
             <th
               key={i}
-              onClick={() => sortColumn(column)}
+              onClick={() => sortColumn(column.label)}
               scope="col"
-              className="group px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider"
+              className="group px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider hover:cursor-pointer"
             >
               <div className="flex items-center justify-between w-full">
                 <div>
@@ -67,8 +63,8 @@ const TableHead = () => {
                 </div>
                 <div>
                   <span>
-                    {column.isSortedAsc
-                      ? column.isSortedDesc
+                    {column.sortMode !== 0
+                      ? column.sortMode !== 1
                         ? <SortDownIcon />
                         : <SortUpIcon />
                       : (
@@ -112,7 +108,7 @@ const TableCell = memo(({ value, index }: { value: string, index: number }) => {
         </td>
       ) : (
         <td className="px-6 py-4 text-center whitespace-nowrap text-sm">
-          <span className="px-4 py-1 uppercase leading-wide font-bold text-xs rounded-full shadow-sm bg-gray-100 text-gray-700">
+          <span className="px-4 py-1 uppercase leading-wide font-bold text-xs rounded-full shadow-sm bg-gray-100 text-gray-700 hover:cursor-default">
             {value}
           </span>
         </td>

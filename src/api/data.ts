@@ -1,7 +1,6 @@
 export type TColumn = {
   label: string;
-  isSortedAsc: boolean;
-  isSortedDesc: boolean;
+  sortMode: number;
 };
 export type TColumnsData = TColumn[];
 export type TRowData = {
