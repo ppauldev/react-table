@@ -1,4 +1,9 @@
-export type TColumnsData = string[];
+export type TColumn = {
+  label: string;
+  isSortedAsc: boolean;
+  isSortedDesc: boolean;
+};
+export type TColumnsData = TColumn[];
 export type TRowData = {
   "band": string;
   "label": string;
