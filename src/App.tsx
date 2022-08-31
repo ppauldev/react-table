@@ -47,7 +47,7 @@ const TableHead = () => {
   return (
     <thead className="bg-gray-50">
       <tr>
-        {columns.map((column, i) => <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" key={i}>{column}</th>)}
+        {columns.map((column, i) => <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" key={i}>{column}</th>)}
       </tr>
     </thead>
   );
@@ -73,7 +73,7 @@ const TableRow = (rowProps: TRowData) => {
 
 const TableCell = ({ value }: { value: string }) => {
   return (
-    <td className="px-6 py-4 whitespace-nowrap text-sm">
+    <td className="px-6 py-4 text-center whitespace-nowrap text-sm">
       {value}
     </td>
   );
