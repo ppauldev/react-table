@@ -5,5 +5,8 @@ export const getColumnData = (data: TRowsData) => {
 };
 
 export const getRowData = (data: TRowsData, page: number, pageSize: number) => {
-  return data.length !== 0 ? data.slice(page - 1, page * pageSize) : [];
+  const start = page === 1 ? page - 1 : (page - 1) * pageSize;
+  const end = page * pageSize;
+
+  return data.length !== 0 ? data.slice(start, end) : [];
 };

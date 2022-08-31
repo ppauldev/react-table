@@ -7,7 +7,8 @@ import { ErrorAlert, LoadingIcon } from "../Icons";
 
 type TPaginationSettings = {
   page: number;
-  turnPage: (nextPage: number) => void;
+  pageSize: number;
+  setPage: (nextPage: number) => void;
   count: number;
 };
 
@@ -52,11 +53,6 @@ export const TableContextProvider = ({ children }: { children: React.ReactNode }
   const [pageSize, setPageSize] = useState(10);
   const { isLoading, error, data } = useQuery(['data'], () => fetchData());
 
-  const turnPage = (nextPage: number) => {
-    console.log("switching to page: ", nextPage);
-    setPage(nextPage);
-  };
-
   useEffect(() => {
     if (!data) return;
 
@@ -70,7 +66,7 @@ export const TableContextProvider = ({ children }: { children: React.ReactNode }
   return (
     <ColumnContext.Provider value={columnData} >
       <RowContext.Provider value={rowData}>
-        <PaginationContext.Provider value={{ page: page, turnPage: turnPage, count: rowData.length }}>
+        <PaginationContext.Provider value={{ page: page, pageSize: pageSize, setPage: setPage, count: data ? data.length : 0 }}>
           {children}
         </PaginationContext.Provider>
       </RowContext.Provider>
