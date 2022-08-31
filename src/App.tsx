@@ -73,7 +73,7 @@ const TableRow = (rowProps: TRowData) => {
 
 const TableCell = ({ value }: { value: string }) => {
   return (
-    <td className="px-6 py-4 whitespace-nowrap">
+    <td className="px-6 py-4 whitespace-nowrap text-sm">
       {value}
     </td>
   );
