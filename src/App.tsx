@@ -4,7 +4,7 @@ import * as DATA_TYPES from "./api/data.types";
 
 import { useColumnContext, usePaginationContext, useRowContext } from "./contexts/TableContext";
 
-import { NextIcon, PreviousIcon, SortDownIcon, SortIcon, SortUpIcon } from "./Icons";
+import { NextIcon, PreviousIcon, SortDownIcon, SortIcon as DefaultSortIcon, SortUpIcon } from "./Icons";
 
 import { TableContextProvider } from "./provider/TableContextProvider";
 
@@ -64,13 +64,7 @@ const TableHead = () => {
                 </div>
                 <div>
                   <span>
-                    {column.sortMode !== 0
-                      ? column.sortMode !== 1
-                        ? <SortDownIcon />
-                        : <SortUpIcon />
-                      : (
-                        <SortIcon />
-                      )}
+                    <SortIcon sortMode={column.sortMode} />
                   </span>
                 </div>
               </div>
@@ -197,6 +191,13 @@ const PreviousButton = () => {
       <PreviousIcon />
     </button>
   );
+};
+
+const SortIcon = ({ sortMode }: { sortMode: number }) => {
+  if (sortMode !== 0 && sortMode !== 1) return <SortDownIcon />;
+  if (sortMode !== 0 && sortMode === 1) return <SortUpIcon />;
+
+  return <DefaultSortIcon />;
 };
 
 export default App;
