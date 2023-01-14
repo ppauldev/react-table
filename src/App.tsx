@@ -1,10 +1,12 @@
-import { memo } from "react";
+import { memo, useState } from "react";
+import { dataLength } from "./api/data";
 
 import * as DATA_TYPES from "./api/data.types";
 
-import { useColumnContext, usePaginationContext, useRowContext } from "./contexts/TableContext";
+import { useColumnContext, usePaginationContext, useRowContext, useSettingsContext } from "./contexts/TableContext";
 
-import { NextIcon, PreviousIcon, SortDownIcon, SortIcon as DefaultSortIcon, SortUpIcon } from "./Icons";
+import { NextIcon, PreviousIcon, SettingsIcon, SortDownIcon, SortIcon as DefaultSortIcon, SortUpIcon } from "./Icons";
+import { SettingsContextProvider } from "./provider/SettingsContextProvider";
 
 import { TableContextProvider } from "./provider/TableContextProvider";
 
@@ -20,20 +22,35 @@ const widths: { [key: number]: string } = {
 
 const App = () => {
   return (
-    <div className="app min-h-screen bg-gray-100 text-gray-900">
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-        <h1 className="text-xl px-4">React Table Demo</h1>
-        <div className="mt-4">
-          <div className="mt-2 flex flex-col">
-            <div className="-my-2 overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8">
-              <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-                <Table />
+    <SettingsContextProvider>
+      <div className="app min-h-screen bg-gray-100 text-gray-900">
+        <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+          <Header />
+          <div className="mt-4">
+            <div className="mt-2 flex flex-col">
+              <div className="-my-2 overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8">
+                <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+                  <Table />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </main >
-    </div >
+        </main >
+      </div >
+    </SettingsContextProvider>
+  );
+};
+
+const Header = () => {
+  const { setShowModal } = useSettingsContext();
+
+  return (
+    <div className="flex flex-row justify-between">
+      <h1 className="text-xl mx-4">React Table Demo</h1>
+      <div className="mx-4 hover:cursor-pointer" onClick={() => setShowModal(true)}>
+        <SettingsIcon />
+      </div>
+    </div>
   );
 };
 
@@ -214,6 +231,55 @@ const SortIcon = ({ sortMode }: { sortMode: number }) => {
   if (sortMode !== 0 && sortMode === 1) return <SortUpIcon />;
 
   return <DefaultSortIcon />;
+};
+
+export const SettingsModal = () => {
+  const { pageSize, setPageSize, setShowModal } = useSettingsContext();
+  const [localPageSize, setLocalPageSize] = useState(pageSize ?? 0);
+
+  const handleClickApply = () => {
+    setPageSize(localPageSize);
+    setShowModal(false);
+  };
+
+  const handleClickCancel = () => {
+    setShowModal(false);
+  };
+
+  return (
+    <div className="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+
+      <div className="fixed inset-0 z-10 overflow-y-auto">
+        <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+          <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-1/3 sm:max-w-lg">
+            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+              <div className="sm:flex sm:items-start">
+                <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-slate-100 sm:mx-0 sm:h-10 sm:w-10">
+                  <div className="h-6 w-6 text-slate-600">
+                    <SettingsIcon />
+                  </div>
+                </div>
+                <div className="mt-3 text-center sm:mt-2 sm:ml-6 sm:text-left">
+                  <h3 className="text-lg font-medium leading-6 text-gray-900" id="modal-title">Settings</h3>
+                  <div className="mt-4 mb-2">
+                    <div>
+                      <label htmlFor="rows" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Results per page</label>
+                      <input type="number" id="rows" min="10" max={dataLength} value={localPageSize} onChange={(event) => setLocalPageSize(parseInt(event.target.value))} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+              <button type="button" onClick={handleClickApply} className={`inline-flex w-full justify-center rounded-md border border-transparent bg-slate-600 px-4 py-2 text-base font-medium text-white shadow-sm ${!(localPageSize < 10 || localPageSize > dataLength) ? "hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2" : ""} sm:ml-3 sm:w-auto sm:text-sm`} disabled={localPageSize < 10 || localPageSize > dataLength}>Apply</button>
+              <button type="button" onClick={handleClickCancel} className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default App;

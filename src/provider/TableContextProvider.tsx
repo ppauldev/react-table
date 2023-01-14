@@ -4,17 +4,19 @@ import useSWR from "swr";
 import * as DATA_TYPES from "../api/data.types";
 import { fetchData } from "../api/dataFetcher";
 
-import { ColumnContext, PaginationContext, RowContext } from "../contexts/TableContext";
+import { ColumnContext, PaginationContext, RowContext, useSettingsContext } from "../contexts/TableContext";
 
 import { getColumnData, getRowData } from "../helper/dataParser";
 
 import { ErrorAlert, LoadingIcon } from "../Icons";
 
 export const TableContextProvider = ({ children }: { children: React.ReactNode }) => {
+  const { pageSize } = useSettingsContext();
+
   const [columnData, setColumnData] = useState<DATA_TYPES.TColumnsData | []>([]);
   const [rowData, setRowData] = useState<DATA_TYPES.TRowsData | []>([]);
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
+
   const { isLoading, error, data } = useSWR('data', fetchData);
 
   const getSortedData = (columnLabel: string, rowData: DATA_TYPES.TRowsData, sortMode: number) => {
@@ -44,6 +46,7 @@ export const TableContextProvider = ({ children }: { children: React.ReactNode }
 
     throw new Error(`Unknown sort mode -> ${sortMode}`);
   };
+
   const sortColumn = (columnLabel: string) => {
     const columnIndex = columnData.findIndex((col) => col.label === columnLabel);
     if (columnIndex === -1) return;

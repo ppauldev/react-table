@@ -703,4 +703,6 @@ const data: DATA_TYPES.TRowsData = [
   }
 ];
 
+export const dataLength = data.length;
+
 export default data;
