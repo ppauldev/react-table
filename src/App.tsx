@@ -1,10 +1,12 @@
 import { memo } from "react";
 
-import { TRowData } from "./api/data";
+import * as DATA_TYPES from "./api/data.types";
 
-import { TableContextProvider, useColumnContext, usePaginationContext, useRowContext } from "./contexts/TableContext";
+import { useColumnContext, usePaginationContext, useRowContext } from "./contexts/TableContext";
 
 import { NextIcon, PreviousIcon, SortDownIcon, SortIcon, SortUpIcon } from "./Icons";
+
+import { TableContextProvider } from "./provider/TableContextProvider";
 
 // Style via TailwindUI: https://tailwindui.com/components/application-ui/lists/tables
 
@@ -90,7 +92,7 @@ const TableBody = () => {
   );
 };
 
-const TableRow = (rowProps: TRowData) => {
+const TableRow = (rowProps: DATA_TYPES.TRowData) => {
   return (
     <tr>
       {Object.values(rowProps).map((value, i) => <TableCell key={i} value={value} index={i} />)}
