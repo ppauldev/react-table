@@ -1,10 +1,10 @@
-import { TRowsData } from "../api/data";
+import * as DATA_TYPES from "../api/data.types";
 
-export const getColumnData = (data: TRowsData) => {
+export const getColumnData = (data: DATA_TYPES.TRowsData) => {
   return data.length !== 0 ? Object.keys(data[0]).map((column) => { return { label: column, sortMode: 0 } }) : []
 };
 
-export const getRowData = (data: TRowsData, page: number, pageSize: number) => {
+export const getRowData = (data: DATA_TYPES.TRowsData, page: number, pageSize: number) => {
   const start = page === 1 ? page - 1 : (page - 1) * pageSize;
   const end = page * pageSize;
 
