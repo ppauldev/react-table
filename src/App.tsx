@@ -10,6 +10,13 @@ import { TableContextProvider } from "./provider/TableContextProvider";
 
 // Style via TailwindUI: https://tailwindui.com/components/application-ui/lists/tables
 
+const widths: { [key: number]: string } = {
+  0: "10%",
+  1: "10%",
+  2: "30%",
+  3: "30%",
+  4: "20%"
+};
 
 const App = () => {
   return (
@@ -50,22 +57,23 @@ const TableHead = () => {
   return (
     <thead className="bg-gray-50">
       <tr>
-        {columns.map((column, i) => {
+        {columns.map((column, index) => {
           return (
             <th
-              key={i}
+              key={index}
               onClick={() => sortColumn(column.label)}
               scope="col"
-              className="group px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider hover:cursor-pointer"
+              className="group py-3 text-xs font-medium text-gray-500 uppercase tracking-wider hover:cursor-pointer"
+              style={{ width: `${widths[index]}` }}
             >
-              <div className="flex items-center justify-between w-full">
-                <div>
-                  {column.label}
-                </div>
-                <div>
+              <div className={`flex items-start w-full ${index !== columns.length - 1 ? "border border-l-0 border-y-0 border-r-slate-200" : ""}`}>
+                <div className="px-1">
                   <span>
                     <SortIcon sortMode={column.sortMode} />
                   </span>
+                </div>
+                <div className="px-2">
+                  {column.label}
                 </div>
               </div>
             </th>
@@ -95,20 +103,28 @@ const TableRow = (rowProps: DATA_TYPES.TRowData) => {
 };
 
 const TableCell = memo(({ value, index }: { value: string, index: number }) => {
-  return (
-    <>
-      {index !== 0 ? (
-        <td className="px-6 py-4 text-left whitespace-nowrap text-sm">
+  if (index === 0) {
+    return (
+      <td className="py-4 text-center text-sm break-words" style={{ width: `${widths[index]}` }}>
+        <span className="px-4 py-1 uppercase leading-wide font-bold text-xs rounded-full shadow-sm bg-gray-100 text-gray-700 hover:cursor-default">
           {value}
-        </td>
-      ) : (
-        <td className="px-6 py-4 text-center whitespace-nowrap text-sm">
-          <span className="px-4 py-1 uppercase leading-wide font-bold text-xs rounded-full shadow-sm bg-gray-100 text-gray-700 hover:cursor-default">
-            {value}
-          </span>
-        </td>
-      )}
-    </>
+        </span>
+      </td>
+    );
+  }
+
+  if (index === 1) {
+    return (
+      <td className="py-4 text-center text-sm break-words" style={{ width: `${widths[index]}` }}>
+        {value}
+      </td>
+    );
+  }
+
+  return (
+    <td className="px-1 py-4 text-left text-sm break-words" style={{ width: `${widths[index]}` }}>
+      {value}
+    </td>
   );
 });
 
