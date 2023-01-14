@@ -1,12 +1,13 @@
-import { TRowData } from "./api/data";
-import { TableContextProvider, useColumnContext, usePaginationContext, useRowContext } from "./contexts/TableContext";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { memo } from "react";
+
+import { TRowData } from "./api/data";
+
+import { TableContextProvider, useColumnContext, usePaginationContext, useRowContext } from "./contexts/TableContext";
+
 import { NextIcon, PreviousIcon, SortDownIcon, SortIcon, SortUpIcon } from "./Icons";
 
 // Style via TailwindUI: https://tailwindui.com/components/application-ui/lists/tables
 
-const queryClient = new QueryClient()
 
 const App = () => {
   return (
@@ -29,17 +30,15 @@ const App = () => {
 
 const Table = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TableContextProvider>
-        <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-          <table className="min-w-full divide-y divide-gray-200">
-            <TableHead />
-            <TableBody />
-          </table>
-          <Pagination />
-        </div>
-      </TableContextProvider>
-    </QueryClientProvider>
+    <TableContextProvider>
+      <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+        <table className="min-w-full divide-y divide-gray-200">
+          <TableHead />
+          <TableBody />
+        </table>
+        <Pagination />
+      </div>
+    </TableContextProvider>
   );
 };
 

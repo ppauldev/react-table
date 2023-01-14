@@ -1,8 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
 import { createContext, useContext, useEffect, useState } from "react";
+import useSWR from "swr";
+
 import { TColumnsData, TRowsData } from "../api/data";
 import { fetchData } from "../api/dataFetcher";
+
 import { getColumnData, getRowData } from "../helper/dataParser";
+
 import { ErrorAlert, LoadingIcon } from "../Icons";
 
 type TPaginationSettings = {
@@ -51,7 +54,7 @@ export const TableContextProvider = ({ children }: { children: React.ReactNode }
   const [rowData, setRowData] = useState<TRowsData | []>([]);
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
-  const { isLoading, error, data } = useQuery(['data'], () => fetchData());
+  const { isLoading, error, data } = useSWR('data', fetchData);
 
   const getSortedData = (columnLabel: string, rowData: TRowsData, sortMode: number) => {
     if (sortMode === 0) {
