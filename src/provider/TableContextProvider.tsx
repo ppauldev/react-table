@@ -7,6 +7,7 @@ import { fetchData } from "../api/dataFetcher";
 import { ColumnContext, PaginationContext, RowContext, useSettingsContext } from "../contexts/TableContext";
 
 import { getColumnData, getRowData } from "../helper/dataParser";
+import * as UTILS from "../helper/utils";
 
 import { ErrorAlert, LoadingIcon } from "../Icons";
 
@@ -21,23 +22,11 @@ export const TableContextProvider = ({ children }: { children: React.ReactNode }
 
   const getSortedData = (columnLabel: string, rowData: DATA_TYPES.TRowsData, sortMode: number) => {
     if (sortMode === 0) {
-      return rowData.sort((a: { [key: string]: string }, b: { [key: string]: string }) => {
-        if (/^\d+$/.test(a[columnLabel]) && /^\d+$/.test(b[columnLabel])) {
-          return parseInt(a[columnLabel]) - parseInt(b[columnLabel]);
-        } else {
-          return a[columnLabel].localeCompare(b[columnLabel]);
-        }
-      });
+      return UTILS.sortAscending(rowData, columnLabel);
     }
 
     if (sortMode === 1) {
-      return rowData.sort((a: { [key: string]: string }, b: { [key: string]: string }) => {
-        if (/^\d+$/.test(a[columnLabel]) && /^\d+$/.test(b[columnLabel])) {
-          return parseInt(b[columnLabel]) - parseInt(a[columnLabel]);
-        } else {
-          return b[columnLabel].localeCompare(a[columnLabel]);
-        }
-      });
+      return UTILS.sortDescending(rowData, columnLabel);
     }
 
     if (sortMode === 2) {
@@ -51,12 +40,12 @@ export const TableContextProvider = ({ children }: { children: React.ReactNode }
     const columnIndex = columnData.findIndex((col) => col.label === columnLabel);
     if (columnIndex === -1) return;
 
-    const copiedColumnData = JSON.parse(JSON.stringify(columnData));
+    const copiedColumnData: DATA_TYPES.TColumnsData = UTILS.copy(columnData);
     const sortMode = copiedColumnData[columnIndex].sortMode;
     copiedColumnData[columnIndex].sortMode = sortMode === 0 ? 1 : sortMode === 1 ? 2 : 0;
     setColumnData(copiedColumnData);
 
-    const copiedRowData: DATA_TYPES.TRowsData = JSON.parse(JSON.stringify(rowData));
+    const copiedRowData: DATA_TYPES.TRowsData = UTILS.copy(rowData);
     const sortedRowData = getSortedData(columnLabel, copiedRowData, sortMode);
     setRowData(sortedRowData);
   };
